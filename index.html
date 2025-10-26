@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="id">
+<!DOCTYPE html>
+<html lang="id">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -28,8 +29,14 @@
       border-radius: 8px;
       padding: 10px;
       resize: vertical;
+      box-sizing: border-box;
     }
-    .btns { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-top: 0.5rem; }
+    .btns {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      margin-top: 0.5rem;
+    }
     button {
       background: #f3f3f3;
       border: 1px solid #ccc;
@@ -39,7 +46,7 @@
       transition: all 0.2s;
     }
     button:hover { background: #e6e6e6; }
-    .result-box { position: relative; }
+    .result-box { position: relative; margin-top: 1rem; }
     .copy-btn {
       position: absolute;
       right: 10px;
@@ -52,42 +59,45 @@
       font-size: 0.8rem;
     }
     .error { color: #c00; margin-top: 8px; font-size: 0.9rem; }
-    .note { font-size: 0.8rem; color: #777; margin-top: 1rem; }
+    pre {
+      background: #f6f6f6;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 10px;
+      overflow-x: auto;
+      white-space: pre;
+      font-size: 0.9rem;
+    }
   </style>
 </head>
 <body>
   <div class="container">
     <h1>Elaina-Bail Plugin Converter</h1>
     <p>
-      Ubah plugin <code>@rexxhayanasi/elaina-bail</code> menjadi format CJS, ESM, atau gunakan <code>switch case</code> dengan API: 
-      <code>https://api.siputzx.my.id/api/ai/gpt3</code>
-    </p><label>
-  <div><strong>Kode Plugin:</strong></div>
-  <textarea id="inputCode" rows="12" placeholder="Tempelkan kode plugin di sini..."></textarea>
-</label>
+      Ubah plugin yang menggunakan baileys <code>@rexxhayanasi/elaina-bail</code> menjadi format CJS, ESM, atau ubah menjadi <code>switch case</code>.
+    </p>
 
-<div class="btns">
-  <button id="btnCJS">To CJS</button>
-  <button id="btnESM">To ESM</button>
-  <button id="btnSwitch">To Case (switch case)</button>
-  <button id="btnPaste" style="margin-left:auto">Paste dari Clipboard</button>
-</div>
+    <label>
+      <div><strong>Kode Plugin:</strong></div>
+      <textarea id="inputCode" rows="12" placeholder="Tempelkan kode plugin di sini..."></textarea>
+    </label>
 
-<div id="error" class="error"></div>
+    <div class="btns">
+      <button id="btnCJS">To CJS</button>
+      <button id="btnESM">To ESM</button>
+      <button id="btnSwitch">To Case (switch case)</button>
+      <button id="btnPaste" style="margin-left:auto">Paste dari Clipboard</button>
+    </div>
 
-<div style="margin-top:1rem">
-  <div><strong>Hasil:</strong></div>
-  <div class="result-box">
-    <textarea id="outputCode" rows="14" readonly placeholder="Hasil akan muncul di sini"></textarea>
-    <button id="btnCopy" class="copy-btn">Copy</button>
+    <div id="error" class="error"></div>
+
+    <div class="result-box">
+      <button id="btnCopy" class="copy-btn">Copy</button>
+      <pre id="outputCode">Hasil akan muncul di sini...</pre>
+    </div>
   </div>
-</div>
 
-<div class="note">
-  Catatan: Tool ini menggunakan API eksternal dan prompt khusus untuk konversi kode.
-</div>
-
-  </div>  <script>
+  <script>
     const API_BASE = 'https://api.siputzx.my.id/api/ai/gpt3';
     const prompts = {
       cjs: "You are a helpful assistant. Convert the following plugin code for the package '@rexxhayanasi/elaina-bail' to CommonJS format (module.exports / require). Only return the converted code and nothing else. Do not add explanations.",
@@ -101,13 +111,13 @@
 
     async function callApi(kind) {
       errorEl.textContent = '';
-      outputEl.value = '';
+      outputEl.textContent = 'Memproses...';
       const code = inputEl.value.trim();
       if (!code) {
-        errorEl.textContent = 'Masukkan kode plugin terlebih dahulu (paste atau ketik).';
+        errorEl.textContent = 'Masukkan kode plugin terlebih dahulu.';
+        outputEl.textContent = '';
         return;
       }
-      outputEl.value = 'Memproses...';
       try {
         const prompt = encodeURIComponent(prompts[kind]);
         const content = encodeURIComponent(code);
@@ -118,12 +128,12 @@
         let result = '';
         if (typeof json === 'string') result = json;
         else if (json.output) result = json.output;
-        else if (json.choices && json.choices[0] && json.choices[0].text) result = json.choices[0].text;
+        else if (json.choices?.[0]?.text) result = json.choices[0].text;
         else result = JSON.stringify(json);
-        outputEl.value = result.trim();
+        outputEl.textContent = result.trim();
       } catch (err) {
-        errorEl.textContent = err.message || 'Gagal memanggil API';
-        outputEl.value = '';
+        errorEl.textContent = err.message || 'Gagal memanggil API.';
+        outputEl.textContent = '';
       }
     }
 
@@ -142,10 +152,11 @@
 
     document.getElementById('btnCopy').onclick = async () => {
       try {
-        await navigator.clipboard.writeText(outputEl.value);
+        await navigator.clipboard.writeText(outputEl.textContent);
       } catch (e) {
         errorEl.textContent = 'Gagal menyalin: ' + e.message;
       }
     };
-  </script></body>
+  </script>
+</body>
 </html>
