@@ -4,89 +4,150 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Elaina-Bail Plugin Converter</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
   <style>
+    :root {
+      --primary: #ffb703;
+      --primary-dark: #fb8500;
+      --bg: #fefefe;
+      --text: #222;
+      --card-bg: #fff;
+    }
+
     body {
-      font-family: system-ui, sans-serif;
-      background: #fafafa;
-      color: #222;
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(180deg, var(--primary) 0%, var(--primary-dark) 100%);
+      color: var(--text);
       margin: 0;
-      padding: 0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
     }
+
     .container {
+      background: var(--card-bg);
       max-width: 900px;
-      margin: 2rem auto;
-      background: #fff;
+      width: 100%;
       padding: 2rem;
-      border-radius: 1rem;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      border-radius: 1.5rem;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+      text-align: center;
     }
-    h1 { font-size: 1.6rem; margin-bottom: 0.5rem; }
-    p { font-size: 0.9rem; color: #555; }
+
+    h1 {
+      font-size: 1.8rem;
+      font-weight: 700;
+      margin-bottom: 0.25rem;
+      color: var(--primary-dark);
+    }
+
+    p {
+      font-size: 0.9rem;
+      color: #555;
+      margin-bottom: 1.5rem;
+    }
+
     textarea {
       width: 100%;
       font-family: monospace;
-      border: 1px solid #ddd;
-      border-radius: 8px;
-      padding: 10px;
+      border: 1.5px solid #ddd;
+      border-radius: 1rem;
+      padding: 12px;
       resize: vertical;
+      font-size: 0.9rem;
       box-sizing: border-box;
+      min-height: 180px;
+      transition: 0.2s border-color ease;
     }
+
+    textarea:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(255,183,3,0.3);
+    }
+
     .btns {
       display: flex;
-      gap: 0.5rem;
+      gap: 0.75rem;
       flex-wrap: wrap;
-      margin-top: 0.5rem;
+      justify-content: center;
+      margin-top: 1rem;
     }
+
     button {
-      background: #f3f3f3;
-      border: 1px solid #ccc;
-      border-radius: 6px;
-      padding: 8px 12px;
+      background: linear-gradient(90deg, var(--primary) 0%, var(--primary-dark) 100%);
+      border: none;
+      color: #fff;
+      font-weight: 600;
+      border-radius: 2rem;
+      padding: 10px 18px;
       cursor: pointer;
-      transition: all 0.2s;
+      transition: all 0.25s ease;
+      box-shadow: 0 3px 10px rgba(251,133,0,0.25);
     }
-    button:hover { background: #e6e6e6; }
-    .result-box { position: relative; margin-top: 1rem; }
+
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(251,133,0,0.35);
+    }
+
+    .result-box {
+      margin-top: 1.5rem;
+      position: relative;
+    }
+
+    pre {
+      background: #f9f9f9;
+      border-radius: 1rem;
+      border: 1px solid #eee;
+      padding: 1rem;
+      text-align: left;
+      overflow-x: auto;
+      font-family: monospace;
+      font-size: 0.9rem;
+      white-space: pre;
+      color: #333;
+    }
+
     .copy-btn {
       position: absolute;
-      right: 10px;
-      top: 10px;
-      background: #fff;
-      border: 1px solid #ddd;
-      border-radius: 6px;
-      padding: 4px 8px;
-      cursor: pointer;
+      right: 15px;
+      top: 15px;
+      background: var(--primary-dark);
+      color: white;
+      border: none;
+      border-radius: 1rem;
+      padding: 4px 10px;
       font-size: 0.8rem;
+      cursor: pointer;
+      box-shadow: 0 3px 8px rgba(251,133,0,0.3);
     }
-    .error { color: #c00; margin-top: 8px; font-size: 0.9rem; }
-    pre {
-      background: #f6f6f6;
-      border: 1px solid #ddd;
-      border-radius: 8px;
-      padding: 10px;
-      overflow-x: auto;
-      white-space: pre;
-      font-size: 0.9rem;
+
+    .copy-btn:hover {
+      background: var(--primary);
+    }
+
+    .error {
+      color: #c00;
+      margin-top: 10px;
+      font-weight: 500;
     }
   </style>
 </head>
 <body>
   <div class="container">
     <h1>Elaina-Bail Plugin Converter</h1>
-    <p>
-      Ubah plugin yang menggunakan baileys <code>@rexxhayanasi/elaina-bail</code> menjadi format CJS, ESM, atau ubah menjadi <code>switch case</code>.
-    </p>
+    <p>Ubah plugin <code>@rexxhayanasi/elaina-bail</code> menjadi format CJS, ESM, atau ubah ke bentuk <code>switch case</code>.</p>
 
-    <label>
-      <div><strong>Kode Plugin:</strong></div>
-      <textarea id="inputCode" rows="12" placeholder="Tempelkan kode plugin di sini..."></textarea>
-    </label>
+    <textarea id="inputCode" placeholder="Tempelkan kode plugin di sini..."></textarea>
 
     <div class="btns">
       <button id="btnCJS">To CJS</button>
       <button id="btnESM">To ESM</button>
       <button id="btnSwitch">To Case (switch case)</button>
-      <button id="btnPaste" style="margin-left:auto">Paste dari Clipboard</button>
+      <button id="btnPaste">Paste</button>
     </div>
 
     <div id="error" class="error"></div>
@@ -111,7 +172,7 @@
 
     async function callApi(kind) {
       errorEl.textContent = '';
-      outputEl.textContent = 'Memproses...';
+      outputEl.textContent = '⏳ Memproses...';
       const code = inputEl.value.trim();
       if (!code) {
         errorEl.textContent = 'Masukkan kode plugin terlebih dahulu.';
@@ -126,11 +187,20 @@
         if (!res.ok) throw new Error(`API error: ${res.status}`);
         const json = await res.json();
         let result = '';
+
         if (typeof json === 'string') result = json;
         else if (json.output) result = json.output;
+        else if (json.data) result = json.data;
         else if (json.choices?.[0]?.text) result = json.choices[0].text;
-        else result = JSON.stringify(json);
-        outputEl.textContent = result.trim();
+        else result = JSON.stringify(json, null, 2);
+
+
+        result = result
+          .replace(/^```[a-z]*\n?/, '')
+          .replace(/```$/, '')
+          .trim();
+
+        outputEl.textContent = result;
       } catch (err) {
         errorEl.textContent = err.message || 'Gagal memanggil API.';
         outputEl.textContent = '';
